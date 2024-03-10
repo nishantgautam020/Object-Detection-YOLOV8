@@ -5,12 +5,13 @@ import numpy as np
 import pandas as pd
 from shutil import copyfile
 from shutil import move
+import matplotlib.pyplot as plt
 
 
 # Set paths
 input_image_folder = "/Users/nishantgautam/Desktop/buro/training/images" # folder location containing original images
 input_label_folder = "/Users/nishantgautam/Desktop/buro/training/labels/" # folder location containing labels
-output_image_folder = "/Users/nishantgautam/Desktop/buro/training/re_images" # folder location containing resized images
+output_image_folder = "/Users/nishantgautam/Desktop/buro/training/resized_images" # folder location containing resized images
 target_size = 300  # Choose your target size
 
 
@@ -79,3 +80,69 @@ print("------------------------------------------------")
 
 #provides a summary of the central tendencies, dispersion, and shape of a dataset's distribution.
 print("Statistical Summary of Columns:",df_img_resize.describe())
+
+
+
+
+
+# MAPPING LABELS OVER IMAGES / PLOTTING FOR VISUALIZATIONS
+
+# Identifying Annotation Classess
+print("                                          CLASSES", )
+print("                                       Class 0: Door", )
+print("                                       Class 1: Window", )
+print("                                       Class 2: Zone/Room", )
+
+
+# Function to Visualize Images with their Corresponding Labels.
+def display_image_with_labels(image_number):
+    # Directory where the images are stored
+    images_folder = "/Users/nishantgautam/Desktop/buro/training/images/"
+    # Directory where the labels are stored
+    labels_folder = "/Users/nishantgautam/Desktop/buro/training/labels/"
+    
+    # Generate the image path using the image number
+    image_filename = f"{image_number}.png"
+    image_path = os.path.join(images_folder, image_filename)
+    
+    # Check if the image exists
+    if os.path.exists(image_path):
+        # Load the image
+        image = Image.open(image_path)
+
+        # Create a figure and axis
+        fig, ax = plt.subplots(1, figsize=(20, 15))
+
+        # Display the image
+        ax.imshow(image)
+
+        # Read data from the corresponding label file
+        label_filename = f"{image_number}.txt"
+        label_file_path = os.path.join(labels_folder, label_filename)
+        if os.path.exists(label_file_path):
+            with open(label_file_path, 'r') as file:
+                lines = file.readlines()
+                for line in lines:
+                    # Split each line into class_id, x_center, y_center, bbox_width, bbox_height
+                    class_id, x_center, y_center, bbox_width, bbox_height = map(float, line.split())
+                    # Convert relative coordinates to absolute coordinates
+                    image_width, image_height = image.size
+                    x_center *= image_width
+                    y_center *= image_height
+                    bbox_width *= image_width
+                    bbox_height *= image_height
+                    # Plot bounding box
+                    xmin = x_center - bbox_width / 2
+                    ymin = y_center - bbox_height / 2
+                    rect = plt.Rectangle((xmin, ymin), bbox_width, bbox_height, fill=False, edgecolor='red', linewidth=2)
+                    ax.add_patch(rect)
+                    # Display class ID
+                    ax.text(xmin, ymin, f'Class {int(class_id)}', bbox=dict(facecolor='red', alpha=0.5), fontsize=12, color='white')
+        
+        plt.show()
+    else:
+        print(f"Image {image_number} not found.")
+
+# Example usage:
+image_number = 521
+display_image_with_labels(image_number)
