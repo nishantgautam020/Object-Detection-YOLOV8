@@ -1,0 +1,10 @@
+path: /Users/nishantgautam/Desktop/yolov8/data  # dataset root directory
+train: images  # train images directory (relative to 'path')
+val: images  # validation images directory (relative to 'path')
+# test:  # test images directory (optional)
+
+# Classes
+names:
+  0: door
+  1: window
+  2: room
