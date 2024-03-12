@@ -6,7 +6,7 @@ from ultralytics import YOLO
 
 def model_predict():
     # Define the new video path
-    video_path = os.path.join('/Users/nishantgautam/Desktop/buro/video/', 'designs')
+    video_path = os.path.join('/Users/nishantgautam/Desktop/buro/video/', 'designs.mp4')
     video_path_out = '{}_out.mp4'.format(video_path)
 
     cap = cv2.VideoCapture(video_path)
